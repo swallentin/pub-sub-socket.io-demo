@@ -5,8 +5,8 @@
 
 var express = require('express')
   , routes = require('./routes')
-
-var app = module.exports = express.createServer();
+  , app = module.exports = express.createServer()
+  , io = require('socket.io').listen(app);
 
 // Configuration
 
@@ -26,6 +26,23 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.use(express.errorHandler()); 
+});
+
+
+// socket io stuff
+io.sockets.on('connection', function (socket) {
+  
+  socket.on('/event2', function (data) {
+    console.log("/event2: " + data.message);
+    socket.emit('/log/server', data);
+  });
+  
+  socket.on('/event3', function(data){
+    console.log("/event3: " + data.message);
+    socket.emit('/event3', data)
+    socket.emit('/log/server', data);
+  });
+  
 });
 
 // Routes

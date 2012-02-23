@@ -1,92 +1,70 @@
-/* Foundation v2.1.5 http://foundation.zurb.com */
 $(document).ready(function () {
-
-	/* Use this js doc for all application specific JS */
-
-	/* TABS --------------------------------- */
-	/* Remove if you don't need :) */
-
-	function activateTab($tab) {
-		var $activeTab = $tab.closest('dl').find('a.active'),
-				contentLocation = $tab.attr("href") + 'Tab';
-
-		//Make Tab Active
-		$activeTab.removeClass('active');
-		$tab.addClass('active');
-
-    	//Show Tab Content
-		$(contentLocation).closest('.tabs-content').children('li').hide();
-		$(contentLocation).show();
-	}
-
-	$('dl.tabs').each(function () {
-		//Get all tabs
-		var tabs = $(this).children('dd').children('a');
-		tabs.click(function (e) {
-			activateTab($(this));
-		});
-	});
-
-	if (window.location.hash) {
-		activateTab($('a[href="' + window.location.hash + '"]'));
-	}
-
-	/* ALERT BOXES ------------ */
-	$(".alert-box").delegate("a.close", "click", function(event) {
-    event.preventDefault();
-	  $(this).closest(".alert-box").fadeOut(function(event){
-	    $(this).remove();
-	  });
-	});
-
-
-	/* PLACEHOLDER FOR FORMS ------------- */
-	/* Remove this and jquery.placeholder.min.js if you don't need :) */
-
-	$('input, textarea').placeholder();
-
-
-
-	/* UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE6/7/8 SUPPORT AND ARE USING .block-grids */
-//	$('.block-grid.two-up>li:nth-child(2n+1)').css({clear: 'left'});
-//	$('.block-grid.three-up>li:nth-child(3n+1)').css({clear: 'left'});
-//	$('.block-grid.four-up>li:nth-child(4n+1)').css({clear: 'left'});
-//	$('.block-grid.five-up>li:nth-child(5n+1)').css({clear: 'left'});
-
-
-
-	/* DROPDOWN NAV ------------- */
-
-	var lockNavBar = false;
-	$('.nav-bar a.flyout-toggle').live('click', function(e) {
-		e.preventDefault();
-		var flyout = $(this).siblings('.flyout');
-		if (lockNavBar === false) {
-			$('.nav-bar .flyout').not(flyout).slideUp(500);
-			flyout.slideToggle(500, function(){
-				lockNavBar = false;
-			});
-		}
-		lockNavBar = true;
-	});
-  if (Modernizr.touch) {
-    $('.nav-bar>li.has-flyout>a.main').css({
-      'padding-right' : '75px'
-    });
-    $('.nav-bar>li.has-flyout>a.flyout-toggle').css({
-      'border-left' : '1px dashed #eee'
-    });
-  } else {
-    $('.nav-bar>li.has-flyout').hover(function() {
-      $(this).children('.flyout').show();
-    }, function() {
-      $(this).children('.flyout').hide();
-    })
-  }
-
-
-	/* DISABLED BUTTONS ------------- */
-	/* Gives elements with a class of 'disabled' a return: false; */
   
+  var socket = io.connect('http://dev.local');
+  var template ='<li class="type">{{message}}</li>';
+  
+  $.subscribe('/event1', function( data ) {
+    var output =  Mustache.render(template, data);
+    $('.event-container').append(output);
+  });
+  
+  $('#event-button-1').click(function(){
+    $.publish('/event1', [{ message:'/event1: This is a local jQuery pub/sub event.' }]);
+  });
+  
+  $('#event-button-2').click(function(){
+    var data = { 
+      message: '/event2 Triggered event 2 on client and sent it to the server.'
+      };
+    socket.emit('/event2', data);
+    $.publish('/log/client', [data])
+  });
+  
+  $('#event-button-3').click(function(){
+    var data = { 
+      message: "This events triggers on click and then sends it to the server which in turns sends it back to the client."
+    };
+    socket.emit('/event3', data)
+    $.publish('/log/client', [data]);
+  });
+  
+  $('#event-button-4').click(function(){
+    console.log('button #4 clicked');
+  });
+  
+  $('#event-button-5').click(function(){
+    console.log('button #5 clicked');
+  });
+  
+  $.subscribe('/event2', function(data) {
+    socket.emit('/event2', data);
+  });
+  
+  $.subscribe('/event3', function(data) {
+    var output =  Mustache.render(template, data);
+    $('.event-container').append(output);    
+  });
+  
+  $.subscribe('/log/client', function(data) {
+    var output = Mustache.render(template, data);
+    $('.client-log-container').append(output)
+  });
+  
+  $.subscribe('/log/server', function(data){
+    var output = Mustache.render(template, data);
+    $('.server-log-container').append(output)
+  });
 
+  $('#event-button-6').click(function(){
+    console.log('button #6 clicked');
+    
+  });
+  
+  socket.on('/log/server', function (data) {
+    $.publish('/log/server', [data]);
+  });
+  
+  socket.on('/event3', function (data){
+    $.publish('/event3', [data]);
+  });
 });

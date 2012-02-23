@@ -1,3 +1,14 @@
+mixin button(css, target, text)
+  - var style = ['blue', 'button']
+  - if(css)
+  -  style = style.concat(css)
+  a(href=target, class=style.join(' ')) #{text}
+
+mixin nice-button(css, target, text)
+  - if(css)
+  - css = css.concat(['nice', 'radius'])
+  mixin button(css, target, text)
+  
 !!! html
 //if lt IE 7
     html(class="no-js ie6 oldie", lang="en")
@@ -13,8 +24,8 @@ html(class="no-js", lang="en")
     title= title
     
     // include CSS Files
-    link(rel='stylesheet', href='/stylesheets/foundation.css')
-    link(rel='stylesheet', href='/stylesheets/app.css')
+    link(rel='stylesheet', href='stylesheets/foundation.css')
+    link(rel='stylesheet', href='stylesheets/app.css')
     
     |   <!--[if lt IE 9]>
     |   <link rel="stylesheet" href="stylesheets/ie.css">
@@ -30,83 +41,58 @@ html(class="no-js", lang="en")
     .container
       .row
         div(class'twelve columns')
-          h2 Welcome to Foundation using Node.js, Express with Jade and Stylus
-          p This is version 2.1.5 released on Januaru 26, 2012
-          hr
+          h2 #{title}
       .row
         div(class='eight columns')
-          h3 The Grid
-          // Grid Example
+          .row
+            div(class='twelve columns events')
+              a(id='event-button-1', class='blue button nice radius', href='#') Trigger event 1
+              a(id='event-button-2', class='blue button nice radius', href='#') Trigger event 2
+              a(id='event-button-3', class='blue button nice radius', href='#') Trigger event 3
+              
           .row
             div(class='twelve columns')
+              h4 Output
+              strong This is the output that would be presented in a production environment
               .panel
-                p This is a twelve column section in a row. Each of these includes a div.panel element so you can see where the columns are - it's not required at all for the grid.
+                ul.event-container
           .row
-            div(class='six columns')
+            div(class='twelve columns')
+              h4 Client log
+              strong Listens to channel /log/client. Client log is used for debugging.
               .panel
-                p Six columns
-            div(class='six columns')
-              .panel
-                p Six columns
+                ul.client-log-container
           .row
-            div(class='four columns')
+            div(class='twelve columns')
+              h4 Server log
+              strong Listens to channel /log/server. Server log is used for debugging.
               .panel
-                p Four columns
-            div(class='four columns')
-              .panel
-                p Four columns
-            div(class='four columns')
-              .panel
-                p Four columns
-            h3 Tabs
-            dl.tabs
-              dd
-                a(href='#simple1', class='active') Simple Tab 1
-              dd
-                a(href='#simple2') Simple Tab 2
-              dd
-                a(href='#simple3') Simple Tab 3
-
-            ul.tabs-content
-              li(class='active', id='simple1Tab') This is simple tab 1's content. Pretty neat, huh?
-              li(id='simple2Tab') This is simple tab 2's content. Now you see it!
-              li(id='simple3Tab') This is simple tab 3's content. It's, you know...okay.
-            h3 Buttons
-            p 
-              a(href='#', class='small blue button') Small Blue Button
-            p
-              a(href='#', class='blue button') Medium Blue Button
-            p
-              a(href='#', class='large blue button') Large Blue Button
-
-            p 
-              a(href='#', class='nice radius small blue button') Nice Blue Button
-            p
-              a(href='#', class='nice radius blue button') Nice Blue Button
-            p
-              a(href='#', class='nice radius large blue button') Nice Blue Button
+                ul.server-log-container
+                                    
         div(class='four columns')
-          h4 Getting Started
-          p We're stoked you want to try Foundation! To get going, this file (index.html) includes some basic styles you can modify, play around with, or totally destroy to get going.
+          .row
+            div(class='twelve columns')
+            .panel
+              h4 Trigger event 1
+              p Trigger a client event that gets published to the client application.
+              
+              h4 Trigger event 2
+              p Send a local event to the server.
+              
+              h4 Trigger event 3
+              p Trigger a client event that gets sent to the server, server then sends the event back to the client application that then handle the event.
+                     
+              h4 Output
+              strong Another output container
+              ul.event-container
 
-          h4 Other Resources
-          p Once you've exhausted the fun in this document, you should check out:
-          ul.disc
-            li  
-              a(href='http://foundation.zurb.com/docs') Foundation Documentation
-              br
-              | Everything you need to know about using the framework.
-            li
-              a(href='http://github.com/zurb/foundation') Foundation on Github</a>
-              br
-              | Latest code, issue reports, feature requests and more.
-            li
-              a(href='http://twitter.com/foundationzurb') @foundationzurb
-              br
-              | Ping us on Twitter if you have questions. If you build something with this we'd love to see it (and send you a totally boss sticker).
     // container
     // Included JS Files
     script(src='javascripts/jquery.min.js')
     script(src='javascripts/modernizr.foundation.js')
     script(src='javascripts/foundation.js')
+    script(src='socket.io/socket.io.js')
     script(src='javascripts/app.js')
+    script(src='javascripts/pubsub.js')
+    script(src='javascripts/mustache.js')
+    | <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>

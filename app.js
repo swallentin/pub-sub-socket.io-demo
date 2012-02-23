@@ -10,6 +10,8 @@ var express = require('express')
 
 // Configuration
 
+
+
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -28,6 +30,11 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
+// assuming io is the Socket.IO server object
+io.configure("production", function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
 
 // socket io stuff
 io.sockets.on('connection', function (socket) {

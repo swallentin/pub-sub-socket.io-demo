@@ -1,6 +1,6 @@
 $(document).ready(function () {
   
-  var socket = io.connect('http://dev.local');
+  var socket = io.connect();
   var template ='<li class="type">{{message}}</li>';
   
   $.subscribe('/event1', function( data ) {

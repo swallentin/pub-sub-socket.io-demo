@@ -6,7 +6,8 @@
 var express = require('express')
   , routes = require('./routes')
   , app = module.exports = express.createServer()
-  , io = require('socket.io').listen(app);
+  , io = require('socket.io').listen(app)
+  , hub = require('node-pubsub');
 
 // Configuration
 
@@ -39,6 +40,10 @@ io.configure("production", function () {
 // socket io stuff
 io.sockets.on('connection', function (socket) {
   
+  socket.on('/chat', function(data){
+    hub.publish('/chat', [ data ], this );
+  });
+  
   socket.on('/event2', function (data) {
     console.log("/event2: " + data.message);
     socket.emit('/log/server', data);
@@ -50,6 +55,15 @@ io.sockets.on('connection', function (socket) {
     socket.emit('/log/server', data);
   });
   
+  
+  hub.subscribe('/chat', function( message ) {
+    socket.emit('/chat', message);
+  });
+  
+  socket.on('disconnect', function(){
+    console.log('unsubscribing.');
+    hub.unsubscribe(['/chat']);
+  });
 });
 
 // Routes

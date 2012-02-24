@@ -52,6 +52,7 @@ html(class="no-js", lang="en")
               a(id='event-button-1', class='blue button nice radius', href='#') Trigger event 1
               a(id='event-button-2', class='blue button nice radius', href='#') Trigger event 2
               a(id='event-button-3', class='blue button nice radius', href='#') Trigger event 3
+              a(id='event-button-4', class='blue button nice radius', href='#') Trigger event 4
               
           .row
             div(class='twelve columns')
@@ -84,7 +85,11 @@ html(class="no-js", lang="en")
               
               h4 Trigger event 3
               p Trigger a client event that gets sent to the server, server then sends the event back to the client application that then handle the event.
-                     
+              
+              h4 Trigger event 4
+              p Send a chat message to all clients connected to the server.
+              p To properly test this you need to open up two separate browsers.
+                                   
               h4 Output
               strong Another output container
               ul.event-container

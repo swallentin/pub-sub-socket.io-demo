@@ -8,7 +8,10 @@ mixin nice-button(css, target, text)
   - if(css)
   - css = css.concat(['nice', 'radius'])
   mixin button(css, target, text)
-
+  
+mixin liveReload(environment)
+  - if(environment === 'development')
+    | <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 
 !!! html
 //if lt IE 7
@@ -103,4 +106,4 @@ html(class="no-js", lang="en")
     script(src='javascripts/app.js')
     script(src='javascripts/pubsub.js')
     script(src='javascripts/mustache.js')
-            // | <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+    mixin liveReload(app.settings.env)
